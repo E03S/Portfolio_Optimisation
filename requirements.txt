@@ -1,0 +1,7 @@
+benzinga
+pandas
+bs4
+yahoo_fin
+warnings; python_version >= '3.2'
+threading; python_version >= '3.2'
+concurrent.futures; python_version >= '3.2'
