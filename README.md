@@ -81,7 +81,7 @@ tickers = parser.get_sp500_tickers()
 # Download historical data
 start_date = datetime(2008, 1, 1)
 end_date = date.today()
-data = parser.download_sp500_data(start_date, end_date, '1h)
+data = parser.download_sp500_data(start_date, end_date)
 
 # Save the data to a CSV file
 parser.save_data_to_csv('sp500_data.csv')
