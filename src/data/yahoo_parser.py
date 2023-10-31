@@ -43,7 +43,7 @@ class SP500Parser:
         if not self.tickers:
             self.get_sp500_tickers()
 
-        data_dir = 'data/raw'
+        data_dir = '../data/raw'
 
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
