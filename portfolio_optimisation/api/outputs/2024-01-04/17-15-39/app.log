@@ -1,0 +1,2 @@
+[2024-01-04 17:15:39,389][__main__][INFO] - Start app with model openai/gpt-3.5-turbo-instruct
+[2024-01-04 17:16:02,012][httpx][INFO] - HTTP Request: POST https://api.vsegpt.ru:6070/v1/chat/completions "HTTP/1.1 200 OK"

@@ -1,0 +1,2 @@
+[2024-01-04 17:18:14,939][root][INFO] - Start app with model anthropic/claude-2
+[2024-01-04 17:18:33,874][httpx][INFO] - HTTP Request: POST https://api.vsegpt.ru:6070/v1/chat/completions "HTTP/1.1 200 OK"
