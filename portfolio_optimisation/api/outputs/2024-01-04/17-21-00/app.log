@@ -1,2 +1,0 @@
-[2024-01-04 17:21:00,836][root][INFO] - Start app with model fireworks/mixtral-8x7b-fw-chat
-[2024-01-04 17:21:07,871][httpx][INFO] - HTTP Request: POST https://api.vsegpt.ru:6070/v1/chat/completions "HTTP/1.1 200 OK"

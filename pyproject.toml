@@ -16,6 +16,12 @@ uvicorn = "^0.25.0"
 fastapi = "^0.108.0"
 pydantic = "^2.5.3"
 openai = "^1.6.1"
+aiogram = "^3.3.0"
+asyncio = "^3.4.3"
+ipykernel = "^6.28.0"
+pandas = "^2.1.4"
+textblob = "^0.17.1"
+tiktoken = "^0.5.2"
 
 
 [build-system]

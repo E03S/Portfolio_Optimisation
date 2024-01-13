@@ -1,4 +1,5 @@
 import openai
+import json
 
 class LLMModel:
     def __init__(self, model_name, system_prompt, api_key, endpoint):
@@ -14,6 +15,25 @@ class LLMModel:
         self.system_prompt = system_prompt
         openai.api_key = api_key
         openai.base_url = endpoint
+
+    def parse_json_from_response(self, response):
+        """
+        Parse the JSON response from the LLM model.
+
+        Parameters:
+        response (dict): The response from the LLM model.
+
+        Returns:
+        list: A list of dictionaries containing the response from the LLM model.
+        """
+        response = response.replace(" ", "").replace("\n", "").replace("```", "").replace("json", "")
+        parsed_json = None
+        try:
+            parsed_json = json.loads(response)
+        except:
+            with open("error.txt", "w") as f:
+                f.write(response)
+        return parsed_json
 
     def create_message(self, user_prompt):
         """

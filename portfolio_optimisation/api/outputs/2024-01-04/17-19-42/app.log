@@ -1,2 +1,0 @@
-[2024-01-04 17:19:42,825][root][INFO] - Start app with model mistralai/mixtral-8x7b-instruct
-[2024-01-04 17:19:55,486][httpx][INFO] - HTTP Request: POST https://api.vsegpt.ru:6070/v1/chat/completions "HTTP/1.1 200 OK"

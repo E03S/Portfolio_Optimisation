@@ -20,7 +20,9 @@ class Prompt(BaseModel):
 async def generate(prompt: Prompt):
     if prompt.text:
         response = model.create_message(prompt.text)
-        return response
+        json = model.parse_json_from_response(response)
+        print(json)
+        return json
     else:
         raise HTTPException(status_code=400, detail="No prompt provided")
 

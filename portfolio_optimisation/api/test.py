@@ -1,0 +1,3 @@
+import json
+
+print(json.loads("\n[\n  {\n    \"ticker\": \"SPX\",\n    \"sentiment\": 0.5,\n    \"expected_return\": 0.3,\n    \"risk_percentage\": 1.5\n  },\n  {\n    \"ticker\": \"STOXX600\",\n    \"sentiment\": 0.5,\n    \"expected_return\": 0.3,\n    \"risk_percentage\": 1.5\n  },\n  {\n    \"ticker\": \"NXT\",\n    \"sentiment\": 1.0,\n    \"expected_return\": 2.0,\n    \"risk_percentage\": 0.5\n  },\n  {\n    \"ticker\": \"Brent\",\n    \"sentiment\": 0.8,\n    \"expected_return\": 1.5,\n    \"risk_percentage\": 1.0\n  },\n  {\n    \"ticker\": \"WTI\",\n    \"sentiment\": 0.8,\n    \"expected_return\": 1.5,\n    \"risk_percentage\": 1.0\n  }\n]"))

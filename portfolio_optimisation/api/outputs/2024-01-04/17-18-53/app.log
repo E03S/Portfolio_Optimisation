@@ -1,2 +1,0 @@
-[2024-01-04 17:18:53,169][root][INFO] - Start app with model google/gemini-pro
-[2024-01-04 17:18:59,738][httpx][INFO] - HTTP Request: POST https://api.vsegpt.ru:6070/v1/chat/completions "HTTP/1.1 200 OK"
