@@ -28,6 +28,7 @@ riskfolio-lib = "^5.0.0"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
+black = "^23.12.1"
 
 [build-system]
 requires = ["poetry-core"]

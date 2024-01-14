@@ -28,10 +28,13 @@ class SP500Parser:
         if self.tickers:
             return self.tickers
 
-        resp = requests.get('http://en.wikipedia.org/wiki/List_of_S%26P_500_companies')
-        soup = bs.BeautifulSoup(resp.text, 'lxml')
-        table = soup.find('table', {'class': 'wikitable sortable'})
-        self.tickers = [row.findAll('td')[0].text.replace('\n', '') for row in table.findAll('tr')[1:]]
+        resp = requests.get("http://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
+        soup = bs.BeautifulSoup(resp.text, "lxml")
+        table = soup.find("table", {"class": "wikitable sortable"})
+        self.tickers = [
+            row.findAll("td")[0].text.replace("\n", "")
+            for row in table.findAll("tr")[1:]
+        ]
         self.tickers.sort()
 
         return self.tickers
@@ -43,17 +46,19 @@ class SP500Parser:
         if not self.tickers:
             self.get_sp500_tickers()
 
-        data_dir = '../data'
+        data_dir = "../data"
 
         if not os.path.exists(data_dir):
             os.makedirs(data_dir)
 
-        pickle_path = os.path.join(data_dir, 'sp500tickers.pickle')
+        pickle_path = os.path.join(data_dir, "sp500tickers.pickle")
 
-        with open(pickle_path, 'wb') as f:
+        with open(pickle_path, "wb") as f:
             pickle.dump(self.tickers, f)
 
-    def download_sp500_data(self, start_date: datetime, end_date: datetime) -> pd.DataFrame:
+    def download_sp500_data(
+        self, start_date: datetime, end_date: datetime
+    ) -> pd.DataFrame:
         """
         Downloads historical data for S&P 500 companies within the specified date range with 1 day granularity.
         Args:
@@ -65,17 +70,18 @@ class SP500Parser:
         if not self.tickers:
             self.get_sp500_tickers()
 
-        data = yf.download(self.tickers,
-                           start=start_date,
-                           end=end_date,
-                           interval='1d')
+        data = yf.download(self.tickers, start=start_date, end=end_date, interval="1d")
 
-        df = data.stack().reset_index().rename(index=str,
-                                               columns={"level_1": "Symbol"}).sort_values(['Symbol',
-                                                                                           'Date']).set_index('Date')
+        df = (
+            data.stack()
+            .reset_index()
+            .rename(index=str, columns={"level_1": "Symbol"})
+            .sort_values(["Symbol", "Date"])
+            .set_index("Date")
+        )
         self.data = df
         return self.data
-    
+
     def save_data_to_csv(self, file_name: str) -> None:
         """
         Saves the DataFrame to a CSV file.
@@ -87,7 +93,9 @@ class SP500Parser:
             self.data.to_csv(file_name)
 
     @staticmethod
-    def download_custom_data(custom_tickers: List[str], start_date: datetime, end_date: datetime) -> pd.DataFrame:
+    def download_custom_data(
+        custom_tickers: List[str], start_date: datetime, end_date: datetime
+    ) -> pd.DataFrame:
         """
         Downloads historical data for custom companies within the specified date range with 1 day granularity.
         Args:
@@ -98,12 +106,15 @@ class SP500Parser:
             pd.DataFrame: A DataFrame containing historical data for S&P 500 companies.
         """
 
-        data = yf.download(custom_tickers,
-                           start=start_date,
-                           end=end_date,
-                           interval='1d')
+        data = yf.download(
+            custom_tickers, start=start_date, end=end_date, interval="1d"
+        )
 
-        df = data.stack().reset_index().rename(index=str,
-                                               columns={"level_1": "Symbol"}).sort_values(['Symbol',
-                                                                                           'Date']).set_index('Date')
+        df = (
+            data.stack()
+            .reset_index()
+            .rename(index=str, columns={"level_1": "Symbol"})
+            .sort_values(["Symbol", "Date"])
+            .set_index("Date")
+        )
         return df
