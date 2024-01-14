@@ -2,3 +2,7 @@ Tokens used:  8,138 prompt + 385 completion = 8,523 tokens
 Total cost for gpt-4-1106-preview: $0.0929
 Tokens used:  356 prompt + 173 completion = 529 tokens
 Total cost for gpt-4-1106-preview: $0.0087
+Tokens used:  356 prompt + 214 completion = 570 tokens
+Total cost for gpt-4-1106-preview: $0.0100
+Tokens used:  356 prompt + 321 completion = 677 tokens
+Total cost for gpt-4-1106-preview: $0.0132
