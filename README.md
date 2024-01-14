@@ -65,6 +65,11 @@ You can save the downloaded data to a CSV file using the save_data_to_csv method
 ```python
 parser.save_data_to_csv('sp500_data.csv')
 ```
+### Download Custom Data:
+To download historical data specific companies, use the `download_custom_data method`. You can specify the date range for data retrieval and time interval:
+```python
+parser.download_custom_data(custom_tickers, start_date, end_date)
+```
 ### Example
 Here's an example of how to use the `SP500Parser` class:
 
