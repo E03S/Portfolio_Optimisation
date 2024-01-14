@@ -85,3 +85,25 @@ class SP500Parser:
         """
         if self.data is not None:
             self.data.to_csv(file_name)
+
+    @staticmethod
+    def download_custom_data(custom_tickers: List[str], start_date: datetime, end_date: datetime) -> pd.DataFrame:
+        """
+        Downloads historical data for custom companies within the specified date range with 1 day granularity.
+        Args:
+            custom_tickers (List[str]): List of specific tickers to parse.
+            start_date (datetime): The start date for data retrieval.
+            end_date (datetime): The end date for data retrieval.
+        Returns:
+            pd.DataFrame: A DataFrame containing historical data for S&P 500 companies.
+        """
+
+        data = yf.download(custom_tickers,
+                           start=start_date,
+                           end=end_date,
+                           interval='1d')
+
+        df = data.stack().reset_index().rename(index=str,
+                                               columns={"level_1": "Symbol"}).sort_values(['Symbol',
+                                                                                           'Date']).set_index('Date')
+        return df

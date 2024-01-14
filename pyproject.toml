@@ -22,7 +22,12 @@ ipykernel = "^6.28.0"
 pandas = "^2.1.4"
 textblob = "^0.17.1"
 tiktoken = "^0.5.2"
+yfinance = "^0.2.35"
+riskfolio-lib = "^5.0.0"
 
+
+[tool.poetry.group.dev.dependencies]
+jupyter = "^1.0.0"
 
 [build-system]
 requires = ["poetry-core"]
