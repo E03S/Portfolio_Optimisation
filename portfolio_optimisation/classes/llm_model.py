@@ -1,6 +1,6 @@
 import openai
 import json
-
+from textblob import TextBlob
 class LLMModel:
     def __init__(self, model_name, system_prompt, api_key, endpoint):
         """
@@ -48,7 +48,7 @@ class LLMModel:
             response = response.replace(" ", "").replace("\n", "").replace("```", "").replace("json", "")
             parsed_json = json.loads(response)
         except:
-            with open("error.txt", "wa") as f:
+            with open("error.txt", "a") as f:
                 f.write(response)
         return parsed_json
 
@@ -63,9 +63,12 @@ class LLMModel:
         token_usage_message = f"Tokens used:  {usage.prompt_tokens:,} prompt + {usage.completion_tokens:,} completion = {usage.total_tokens:,} tokens\n"
         print(token_usage_message)
         cost = self.openai_api_calculate_cost(usage)        
-        with open("usage.txt", "wa") as f:
+        with open("usage.txt", "a") as f:
             f.write(token_usage_message)
             f.write(f"Total cost for {self.model_name}: ${cost:.4f}\n")
+
+    def tokenize_and_contatenate(self, text):
+        return ' '.join(TextBlob(str(text)).words)
 
     def openai_api_calculate_cost(self, usage):
         pricing = {
@@ -94,7 +97,7 @@ class LLMModel:
 
         return total_cost
 
-    def create_message(self, user_prompt):
+    async def create_message(self, user_prompt):
         """
         Create a new message using the LLM model.
 
