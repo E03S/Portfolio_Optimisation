@@ -6,7 +6,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 from typing import Dict, Optional, List
 
-from yahoo_parser import SP500Parser
+from .yahoo_parser import SP500Parser
 
 warnings.filterwarnings("ignore")
 yahoo_parser = SP500Parser()
@@ -72,7 +72,7 @@ class PortfolioOptimizer:
         self.optimized_portfolio = output_dict  # Save the optimized portfolio
         return output_dict
 
-    def sentiment_optimise(self, news: List[Dict[str, float]]) -> Dict[str, float]:
+    def sentiment_optimise(self, news: List[Dict[str, float|str]]) -> Dict[str, float]:
         """
         Optimize the current portfolio using historical data and sentiment analysis.
 

@@ -6,3 +6,27 @@ Tokens used:  356 prompt + 214 completion = 570 tokens
 Total cost for gpt-4-1106-preview: $0.0100
 Tokens used:  356 prompt + 321 completion = 677 tokens
 Total cost for gpt-4-1106-preview: $0.0132
+Tokens used:  440 prompt + 213 completion = 653 tokens
+Total cost for gpt-4-1106-preview: $0.0108
+Tokens used:  440 prompt + 327 completion = 767 tokens
+Total cost for gpt-4-1106-preview: $0.0142
+Tokens used:  440 prompt + 215 completion = 655 tokens
+Total cost for gpt-4-1106-preview: $0.0109
+Tokens used:  440 prompt + 246 completion = 686 tokens
+Total cost for gpt-4-1106-preview: $0.0118
+Tokens used:  440 prompt + 285 completion = 725 tokens
+Total cost for gpt-4-1106-preview: $0.0129
+Tokens used:  440 prompt + 215 completion = 655 tokens
+Total cost for gpt-4-1106-preview: $0.0109
+Tokens used:  440 prompt + 215 completion = 655 tokens
+Total cost for gpt-4-1106-preview: $0.0109
+Tokens used:  440 prompt + 211 completion = 651 tokens
+Total cost for gpt-4-1106-preview: $0.0107
+Tokens used:  440 prompt + 314 completion = 754 tokens
+Total cost for gpt-4-1106-preview: $0.0138
+Tokens used:  440 prompt + 215 completion = 655 tokens
+Total cost for gpt-4-1106-preview: $0.0109
+Tokens used:  440 prompt + 289 completion = 729 tokens
+Total cost for gpt-4-1106-preview: $0.0131
+Tokens used:  440 prompt + 271 completion = 711 tokens
+Total cost for gpt-4-1106-preview: $0.0125

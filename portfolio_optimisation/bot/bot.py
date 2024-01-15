@@ -16,6 +16,8 @@ from hydra import compose, initialize
 from portfolio_optimisation.classes.benzinga import BenzingaParser
 from portfolio_optimisation.classes.llm_model import LLMModel
 from datetime import datetime, timedelta
+from portfolio_optimisation.classes.portfolio_optimizer import PortfolioOptimizer
+import pandas as pd
 
 # All handlers should be attached to the Router (or Dispatcher)
 with initialize(version_base="1.3", config_path="../../configs"):
@@ -74,9 +76,9 @@ async def news_handler(message: types.Message) -> None:
         news = get_titles()
         news_str = '\n'.join(news)
         await message.answer(f"We assemble next news for you\n {news_str}")
-        response = await make_prediction(news, message)
-        portfolio_str = make_portfolio_str_from_json(response)
-        await message.answer(f"Your prediction is\n {portfolio_str}")
+        await make_prediction(news, message)
+        await message.answer(f"Your portfolio is\n `{get_porfolio_str()}`", parse_mode=ParseMode.MARKDOWN)
+
     except TypeError as e:
         print(e)
         await message.answer("Nice try!")
@@ -95,12 +97,8 @@ async def news_handler(message: types.Message) -> None:
         else:
             await message.answer("Please enter some news")
             return
-        response = await make_prediction(news, message)
-        # recalculate portfolio
-        # new_portfolio = recalculate_portfolio(response, portfolio)
-
-        portfolio_str = make_portfolio_str_from_json(response)
-        await message.answer(f"Your prediction is\n {portfolio_str}")
+        await make_prediction(news, message)
+        await message.answer(f"Your portfolio is\n `{get_porfolio_str()}`", parse_mode=ParseMode.MARKDOWN)
     except TypeError as e:
         print(e)
         await message.answer("Nice try!")
@@ -120,8 +118,13 @@ async def make_prediction(news, message: types.Message):
             tokenized_news = ' '.join([model.tokenize_and_contatenate(text) for text in news])
         response = await model.create_message(tokenized_news)
         json = model.parse_json_from_response(response)
-        return json
-    except TypeError:
+        print(json)
+        new_portfolio = recalculate_portfolio(json)
+        global hard_coded_portfolio
+        hard_coded_portfolio = new_portfolio
+        return new_portfolio
+    except TypeError as e:
+        print(e)
         return "Nice try!"
 
 def make_portfolio_str_from_json(json_response):
@@ -129,6 +132,16 @@ def make_portfolio_str_from_json(json_response):
             f"{entry['ticker']}, Sentiment: {entry['sentiment']}, Expected Return: {entry['expected_return']}%, Risk: {entry['risk_percentage']}%"
             for entry in json_response
         )
+
+def recalculate_portfolio(json_response):
+    portfolio_optimizer = PortfolioOptimizer(hard_coded_portfolio)
+    new_portfolio = portfolio_optimizer.sentiment_optimise(pd.DataFrame(json_response))
+    for entry in hard_coded_portfolio.keys():
+        if entry not in new_portfolio.keys():
+            new_portfolio[entry] = 0
+        else:
+            new_portfolio[entry] = round(new_portfolio[entry], 3)
+    return new_portfolio
 
 @dp.message(Command("portfolio"))
 async def portfolio_handler(message: types.Message) -> None:
@@ -139,11 +152,13 @@ async def portfolio_handler(message: types.Message) -> None:
     """
     try:
         # Send a copy of the received message
-        portfolio_str = '\n'.join(f"{ticker}: {percentage}" for ticker, percentage in hard_coded_portfolio.items())
-        await message.answer(f"Your portfolio is\n `{portfolio_str}`", parse_mode=ParseMode.MARKDOWN)
+        await message.answer(f"Your portfolio is\n `{get_porfolio_str()}`", parse_mode=ParseMode.MARKDOWN)
     except TypeError:
         # But not all the types is supported to be copied so need to handle it
         await message.answer("Nice try!")
+
+def get_porfolio_str():
+    return '\n'.join(f"{ticker}: {percentage}" for ticker, percentage in hard_coded_portfolio.items())
 
 def get_titles():
     parser = BenzingaParser(api_key=cfg.benzinga.api_key)
