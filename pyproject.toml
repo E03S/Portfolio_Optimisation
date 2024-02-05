@@ -24,6 +24,7 @@ textblob = "^0.17.1"
 tiktoken = "^0.5.2"
 yfinance = "^0.2.35"
 riskfolio-lib = "^5.0.0"
+benzinga = "^1.21"
 
 
 [tool.poetry.group.dev.dependencies]
