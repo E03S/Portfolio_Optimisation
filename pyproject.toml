@@ -25,6 +25,7 @@ tiktoken = "^0.5.2"
 yfinance = "^0.2.35"
 riskfolio-lib = "^5.0.0"
 benzinga = "^1.21"
+ta = "^0.11.0"
 
 
 [tool.poetry.group.dev.dependencies]

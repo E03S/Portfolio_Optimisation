@@ -75,7 +75,7 @@ async def news_handler(message: types.Message) -> None:
     try:
         news = get_titles()
         news_str = '\n'.join(news)
-        await message.answer(f"We assemble next news for you\n {news_str}")
+        await message.answer(f"We assembled next news for you\n {news_str}")
         await make_prediction(news, message)
         await message.answer(f"Your portfolio is\n `{get_porfolio_str()}`", parse_mode=ParseMode.MARKDOWN)
 
@@ -166,6 +166,10 @@ def get_titles():
     last_week = last_week.strftime("%Y-%m-%d")
     tickers = hard_coded_portfolio.keys()
     news_df = parser.get_news(ticker=tickers, page=1, date_from=last_week, date_to=datetime.now().strftime("%Y-%m-%d"))
+    if len(news_df) <= 1:
+        week_and_half = datetime.now() - timedelta(days=10)
+        week_and_half = week_and_half.strftime("%Y-%m-%d")
+        news_df = parser.get_news(ticker=tickers, page=1, date_from=week_and_half, date_to=datetime.now().strftime("%Y-%m-%d"))
     return news_df['title'].tolist()
 
 async def main() -> None:
