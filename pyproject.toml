@@ -26,6 +26,8 @@ yfinance = "^0.2.35"
 riskfolio-lib = "^5.0.0"
 benzinga = "^1.21"
 ta = "^0.11.0"
+plotly = "^5.19.0"
+scikit-learn = "^1.4.1.post1"
 
 
 [tool.poetry.group.dev.dependencies]
