@@ -4,6 +4,7 @@ datasets/
 __pycache__/
 outputs/
 .ipynb_checkpoints
+catboost_info/
 
 # Environments
 .env
