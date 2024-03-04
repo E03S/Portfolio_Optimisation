@@ -1,3 +1,4 @@
+from datetime import datetime
 import concurrent.futures
 import warnings
 from typing import List, Optional
@@ -5,6 +6,7 @@ from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 import pandas as pd
 from benzinga import news_data
 import ast
+
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 class BenzingaNewsParser:
@@ -27,24 +29,26 @@ class BenzingaNewsParser:
         soup = BeautifulSoup(text, "html.parser")
         return soup.get_text()
 
-    def get_ticker_news(self, ticker: str, page: int) -> Optional[pd.DataFrame]:
-        if not isinstance(ticker, str):
-            ticker = ",".join(ticker)
-        news = self.paper.news(
-            company_tickers=ticker,
-            display_output="full",
-            date_from=self.start_date,
-            date_to=self.end_date,
-            page=page,
-            pagesize=100,
-        )
-        if len(news) == 0:
-            return None
-        df = pd.DataFrame(news)
-        df["teaser"] = df["teaser"].apply(self.remove_html_tags)
-        df["body"] = df["body"].apply(self.remove_html_tags)
-        return df
-
+    def get_ticker_news(self, ticker: str, page: int, date_from: str) -> Optional[pd.DataFrame]:
+        try:
+            if not isinstance(ticker, str):
+                ticker = ",".join(ticker)
+            news = self.paper.news(
+                company_tickers=ticker,
+                display_output="full",
+                date_from=date_from,
+                date_to=self.end_date,
+                page=page,
+                pagesize=100,
+            )
+            if len(news) == 0:
+                return None
+            df = pd.DataFrame(news)
+            df["teaser"] = df["teaser"].apply(self.remove_html_tags)
+            df["body"] = df["body"].apply(self.remove_html_tags)
+            return df
+        except Exception as e:
+            print(e)
 
     def get_df_news(self) -> pd.DataFrame:
         if self.main_df is None:
@@ -58,15 +62,44 @@ class BenzingaNewsParser:
     def run_concurrent(self, max_workers: int = 10) -> None:
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
             futures = [
-                executor.submit(self.get_ticker_news, ticker, 0)
-                for ticker in self.tickers
+                executor.submit(self.fetch_ticker_news, ticker) for ticker in self.tickers
             ]
             for future in concurrent.futures.as_completed(futures):
                 news_df = future.result()
-                if news_df is not None:
-                    news_df["stocks"] = news_df["stocks"].apply(eval).apply(lambda x: [entry["name"] for entry in x])
-                    news_df = news_df.explode("stocks")
-                    news_df["updated"] = pd.to_datetime(news_df["updated"]).dt.tz_localize(None).dt.date
-
+                if news_df is not None:                    
                     self.main_df = pd.concat([self.main_df, news_df], ignore_index=True)
                     self.main_df = self.main_df.drop_duplicates(subset=["id"])
+
+        self.main_df["stocks"] = self.main_df["stocks"].apply(lambda x: [entry["name"] for entry in x])
+        self.main_df = self.main_df.explode("stocks")
+        self.main_df["updated"] = pd.to_datetime(pd.to_datetime(self.main_df["updated"]).dt.strftime('%Y-%m-%d'))
+        self.main_df = self.main_df[self.main_df['body'] != '']
+
+    def fetch_ticker_news(self, ticker: str) -> Optional[pd.DataFrame]:
+        page = 0
+        date_from = self.start_date
+        total_pages = 100
+        main_df = pd.DataFrame()
+        while page < total_pages:
+            news_df = self.get_ticker_news(ticker, page, date_from)
+            if news_df is None:
+                break
+            main_df = pd.concat([main_df, news_df], ignore_index=True)
+            main_df = main_df.drop_duplicates(subset=["id"])
+            page += 1
+            if page > 100:  # Update date_from when page exceeds 100
+                date_from = datetime.strptime(main_df['updated'].iloc[-1], "%a, %d %b %Y %H:%M:%S %z").strftime('%Y-%m-%d')
+                page = 0
+        return main_df
+
+
+if __name__ == "__main__":
+    # Example usage:
+    tickers = ["AAPL", "GOOGL", "MSFT"]  # Example list of tickers
+    start_date = "2024-01-01"  # Example start date
+    end_date = "2024-03-01"  # Example end date
+    api_key = "d2d497c85f47496884ab3a91327a090f"  # Replace with your actual API key
+
+    benzinga_fetcher = BenzingaNewsParser(api_key, tickers, start_date, end_date)
+    benzinga_fetcher.run_concurrent()
+    print(benzinga_fetcher.get_df_news().head().dtypes)

@@ -36,6 +36,8 @@ catboost = "^1.2.3"
 lightgbm = "^4.3.0"
 xgboost = "^2.0.3"
 optuna = "^3.5.0"
+python-dotenv = "^1.0.1"
+category-encoders = "^2.6.3"
 
 
 [tool.poetry.group.dev.dependencies]
