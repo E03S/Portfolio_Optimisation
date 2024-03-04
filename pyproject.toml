@@ -33,6 +33,9 @@ transformers = "^4.38.1"
 torch = "^2.2.1"
 sentence-transformers = "^2.4.0"
 catboost = "^1.2.3"
+lightgbm = "^4.3.0"
+xgboost = "^2.0.3"
+optuna = "^3.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
