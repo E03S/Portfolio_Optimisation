@@ -1,15 +1,33 @@
-# How to use News Parser
-Description: this parser get news for specified ticker from benzinga site from 2008 year to our days.
+# Benzinga News Parser
 
-1. Create account on benzinga
-2. Get API key
-3. Replace YOUR_API_KEY to benzinga api key
-4. use ```run_concurent()``` to run first 100 tickers from SP 500 or paste your desired tickers in tickers list
-5. You will get dataset for each ticker in datasets folder in csv format
-6. Run ```merge_all_in_one_file()``` to get final .csv dataset 
-7. Run ```zip_all_datasets()``` to get .zip file with all datasets
+The Benzinga News Parser is a Python class designed to retrieve news articles from the Benzinga website for specified tickers. It allows users to retrieve news articles for a given list of tickers within a specified date range.
 
-Link to example of such dataset from 30 October of 2023 https://drive.google.com/file/d/1sM2s-W7hVqB5dITH38xiWI3dvB019uDn/view?usp=sharing
+## Getting Started
+
+1. Sign up for an account on Benzinga and obtain an API key.
+2. Replace `YOUR_API_KEY` in the script with your actual Benzinga API key.
+
+## Usage
+
+1. Instantiate the `BenzingaNewsParser` class with your API key, tickers, start date, and end date.
+2. Use the `run_concurrent()` method to fetch news articles for the specified tickers.
+3. Use the `save_dataset()` method to save the dataset to a CSV file.
+
+### Example
+
+```python
+from BenzingaNewsParser import BenzingaNewsParser
+
+# Example usage:
+tickers = ["AAPL", "GOOGL", "MSFT"]  # Example list of tickers
+start_date = "2024-01-01"  # Example start date
+end_date = "2024-03-01"  # Example end date
+api_key = "YOUR_API_KEY"  # Replace with your actual API key
+
+benzinga_fetcher = BenzingaNewsParser(api_key, tickers, start_date, end_date)
+benzinga_fetcher.run_concurrent()
+benzinga_fetcher.save_dataset()
+```
 
 # S&P 500 Parser
 
@@ -21,15 +39,8 @@ This Python class, `SP500Parser`, is designed to make it easy to retrieve and wo
 - Download historical data for S&P 500 companies.
 - Save the downloaded data to a CSV file.
 
-## Getting Started
+## Usage
 
-### Installation
-
-Make sure you have the necessary packages installed. You can install them using `pip`:
-
-```bash
-pip install requirements.txt
-```
 ### Import the Class
 Import the SP500Parser class in your Python script:
 
