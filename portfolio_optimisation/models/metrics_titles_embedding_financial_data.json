@@ -1,1 +1,1 @@
-{"mean_squared_error": 0.0008541716700256553, "mean_absolute_error": 0.01856011562281257, "r2": 0.7825941179296046, "train_size": 60358, "full_train_min": 0.0, "full_train_sec": 19.913322666892782, "titel_embedding_min": 0.0, "titel_embedding_sec": 25.848117917077616}
+{"mean_squared_error": 0.000688798721103898, "mean_absolute_error": 0.01710555349111017, "r2": 0.8246852491302417, "train_size": 60358, "full_train_min": 0.0, "full_train_sec": 20.25413379096426, "titel_embedding_min": 0.0, "titel_embedding_sec": 26.955965125001967}

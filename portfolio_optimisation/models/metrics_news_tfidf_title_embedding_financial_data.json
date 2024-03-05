@@ -1,0 +1,1 @@
+{"mean_squared_error": 0.0008828281941214841, "mean_absolute_error": 0.019027973239809894, "r2": 0.7753003886749947, "train_size": 60358, "full_train_min": 45.0, "full_train_sec": 42.973428290802985, "lemmatization_news_min": 15.0, "lemmatization_news_sec": 36.70095237507485, "tf_idf_news_min": 0.0, "tf_idf_news_sec": 21.85177983297035, "title_embedding_min": 33.74547725007869}
