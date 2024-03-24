@@ -38,6 +38,7 @@ xgboost = "^2.0.3"
 optuna = "^3.5.0"
 python-dotenv = "^1.0.1"
 category-encoders = "^2.6.3"
+pyportfolioopt = "1.5.2"
 
 
 [tool.poetry.group.dev.dependencies]
