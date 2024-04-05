@@ -40,20 +40,15 @@ class PortfolioOptimizer:
         cleaned_weights = ef.clean_weights()
         return cleaned_weights
 
-    def run_optimization(self):
+    def run_optimization(self, expected_weekly_returns = None):
         """Runs the full optimization process."""
+        if expected_weekly_returns:
+            self.expected_weekly_returns = expected_weekly_returns
+        else :
+            self.calculate_weekly_ewma_returns()
+        return self.optimize_portfolio()
+    
+    def initialize(self):
         self.fetch_daily_data()
         self.convert_to_weekly()
-        self.calculate_weekly_ewma_returns()
         self.calculate_covariance_matrix()
-        return self.optimize_portfolio()
-
-# Example usage
-if __name__ == "__main__":
-    tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'TSLA', 'BRK-B', 'JPM', 'JNJ', 'V']
-    start_date = '2020-01-01'
-    today = datetime.today().strftime('%Y-%m-%d')
-    end_date = today
-    optimizer = PortfolioOptimizer(tickers, start_date, end_date)
-    optimal_weights = optimizer.run_optimization()
-    print("Optimal Portfolio Weights:", optimal_weights)

@@ -1,1 +1,0 @@
-TheStockAnalysisJSONBot'soutputfortheprovidednewsisasfollows:{"stocks":[{"ticker":"SPY","sentiment":0.5,"expected_return":0.03,"risk_percentage":0.12},{"ticker":"QQQ","sentiment":0.2,"expected_return":0.02,"risk_percentage":0.1},{"ticker":"IWM","sentiment":-0.3,"expected_return":0.01,"risk_percentage":0.15}]}

@@ -13,10 +13,11 @@ from aiogram.utils.markdown import hbold
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from hydra import compose, initialize
-from portfolio_optimisation.classes.benzinga import BenzingaParser
-from portfolio_optimisation.classes.llm_model import LLMModel
+from ..classes.benzinga_parser import BenzingaNewsParser
+from ..classes.llm_model import LLMModel
+from ..classes.portfolio_optimizer import PortfolioOptimizer
+from ..classes.client import Client
 from datetime import datetime, timedelta
-from portfolio_optimisation.classes.portfolio_optimizer import PortfolioOptimizer
 import pandas as pd
 
 # All handlers should be attached to the Router (or Dispatcher)
@@ -34,7 +35,7 @@ hard_coded_portfolio = {
     'GOOGL': 0.021,
     'TSLA': 0.019,
     'GOOG': 0.018,
-    'BRK.B': 0.018,
+    'BRK-B': 0.018,
     'META': 0.018,
     'UNH': 0.013,
     'XOM': 0.013,
@@ -54,6 +55,13 @@ hard_coded_portfolio = {
     'ADBE': 0.007
 }
 
+client = Client(base_url='http://localhost:8000')
+start_date = '2022-01-01'
+today = datetime.today().strftime('%Y-%m-%d')
+tickers = hard_coded_portfolio.keys()
+tickers = list(tickers)
+optimizer = PortfolioOptimizer(tickers, start_date, today)
+optimizer.initialize()
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
@@ -73,10 +81,10 @@ async def news_handler(message: types.Message) -> None:
     Handler will get next message as a news for prediciton, if message empty it gets last news from benzinga for the last week and make prediction by them
     """
     try:
-        news = get_titles()
-        news_str = '\n'.join(news)
-        await message.answer(f"We assembled next news for you\n {news_str}")
-        await make_prediction(news, message)
+        # news = get_titles()
+        # news_str = '\n'.join(news)
+        # await message.answer(f"We assembled next news for you\n {news_str}")
+        await make_prediction([], message)
         await message.answer(f"Your portfolio is\n `{get_porfolio_str()}`", parse_mode=ParseMode.MARKDOWN)
 
     except TypeError as e:
@@ -106,20 +114,8 @@ async def news_handler(message: types.Message) -> None:
 async def make_prediction(news, message: types.Message):
     try:
         await message.answer("Now we are making prediction it can require some time")
-        model = LLMModel(
-            model_name=cfg.model.openai.model_name,
-            system_prompt=cfg.model.system_prompt,
-            api_key=cfg.model.openai.api_key,
-            endpoint= cfg.model.openai.endpoint,
-        )
-        if (isinstance(news, str)):
-            tokenized_news = model.tokenize_and_contatenate(news)
-        else:
-            tokenized_news = ' '.join([model.tokenize_and_contatenate(text) for text in news])
-        response = await model.create_message(tokenized_news)
-        json = model.parse_json_from_response(response)
-        print(json)
-        new_portfolio = recalculate_portfolio(json)
+        predictions = client.make_batch_prediction(tickers)
+        new_portfolio = recalculate_portfolio(predictions)
         global hard_coded_portfolio
         hard_coded_portfolio = new_portfolio
         return new_portfolio
@@ -134,14 +130,9 @@ def make_portfolio_str_from_json(json_response):
         )
 
 def recalculate_portfolio(json_response):
-    portfolio_optimizer = PortfolioOptimizer(hard_coded_portfolio)
-    new_portfolio = portfolio_optimizer.sentiment_optimise(pd.DataFrame(json_response))
-    for entry in hard_coded_portfolio.keys():
-        if entry not in new_portfolio.keys():
-            new_portfolio[entry] = 0
-        else:
-            new_portfolio[entry] = round(new_portfolio[entry], 3)
-    return new_portfolio
+    sorted_tickers_in_alp = sorted(tickers)
+    values = [json_response[ticker] for ticker in sorted_tickers_in_alp]
+    return optimizer.run_optimization(values)
 
 @dp.message(Command("portfolio"))
 async def portfolio_handler(message: types.Message) -> None:
@@ -161,7 +152,7 @@ def get_porfolio_str():
     return '\n'.join(f"{ticker}: {percentage}" for ticker, percentage in hard_coded_portfolio.items())
 
 def get_titles():
-    parser = BenzingaParser(api_key=cfg.benzinga.api_key)
+    parser = BenzingaNewsParser(api_key=cfg.benzinga.api_key)
     last_week = datetime.now() - timedelta(days=7)
     last_week = last_week.strftime("%Y-%m-%d")
     tickers = hard_coded_portfolio.keys()
