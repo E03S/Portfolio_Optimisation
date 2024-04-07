@@ -3,7 +3,7 @@ from typing import List
 from datetime import date
 from fastapi_cache.decorator import cache
 
-from ..parser.yahoo_parser import SP500Parser
+from ...classes.yahoo_parser import SP500Parser
 
 
 router = APIRouter(prefix="/parser", tags=["Parser"])

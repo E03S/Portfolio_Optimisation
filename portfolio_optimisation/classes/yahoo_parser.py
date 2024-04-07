@@ -1,13 +1,12 @@
-import pickle
 import requests
-import os
 
 import bs4 as bs
 import yfinance as yf
 import pandas as pd
 
+from ta.trend import MACD
 from typing import List, Optional
-from datetime import datetime, date
+from datetime import datetime
 
 
 class SP500Parser:
@@ -36,25 +35,7 @@ class SP500Parser:
             for row in table.findAll("tr")[1:]
         ]
         self.tickers.sort()
-
         return self.tickers
-
-    def save_sp500_tickers(self) -> None:
-        """
-        Retrieves the list of S&P 500 company tickers from Wiki and saves it to a pickle file.
-        """
-        if not self.tickers:
-            self.get_sp500_tickers()
-
-        data_dir = "../data"
-
-        if not os.path.exists(data_dir):
-            os.makedirs(data_dir)
-
-        pickle_path = os.path.join(data_dir, "sp500tickers.pickle")
-
-        with open(pickle_path, "wb") as f:
-            pickle.dump(self.tickers, f)
 
     def download_sp500_data(
         self, start_date: datetime, end_date: datetime
@@ -71,34 +52,19 @@ class SP500Parser:
             self.get_sp500_tickers()
 
         data = yf.download(self.tickers, start=start_date, end=end_date, interval="1d")
-
         df = (
             data.stack()
             .reset_index()
-            .rename(index=str, columns={"level_1": "Ticker"})
-            .sort_values(["Ticker", "Date"])
+            .rename(index=str, columns={"Ticker": "Symbol"})
+            .sort_values(["Symbol", "Date"])
             .set_index("Date")
         )
-
-        df.rename(columns={'Ticker': 'Symbol'}, inplace=True)
-
+        df.reset_index(inplace=True)
         self.data = df
-        
         return self.data
 
-    def save_data_to_csv(self, file_name: str) -> None:
-        """
-        Saves the DataFrame to a CSV file.
-
-        Args:
-        file_name (str): The name of the CSV file.
-        """
-        if self.data is not None:
-            self.data.to_csv(file_name)
-
-    @staticmethod
     def download_custom_data(
-        custom_tickers: List[str], start_date: datetime, end_date: datetime
+        self, custom_tickers: List[str], start_date: datetime, end_date: datetime
     ) -> pd.DataFrame:
         """
         Downloads historical data for custom companies within the specified date range with 1 day granularity.
@@ -109,16 +75,48 @@ class SP500Parser:
         Returns:
             pd.DataFrame: A DataFrame containing historical data for S&P 500 companies.
         """
-
         data = yf.download(
             custom_tickers, start=start_date, end=end_date, interval="1d"
         )
+        if len(custom_tickers) > 1:
+            data = (
+                data.stack()
+                .reset_index()
+                .rename(index=str, columns={"level_1": "Symbol"})
+                .sort_values(["Ticker", "Date"])
+                .set_index("Date")
+            )
+        else:
+            data["Symbol"] = custom_tickers[0]
+        data.reset_index(inplace=True)
+        self.data = data
+        return data
 
-        df = (
-            data.stack()
-            .reset_index()
-            .rename(index=str, columns={"level_1": "Symbol"})
-            .sort_values(["Symbol", "Date"])
-            .set_index("Date")
-        )
-        return df
+    @staticmethod
+    def apply_features(group):
+        group.index = pd.to_datetime(group.index)
+
+        for lag in range(1, 4):
+            group[f"lag_{lag}"] = group["Close"].shift(lag)
+
+        group["5_day_MA"] = group["Close"].rolling(window=5).mean()
+        group["20_day_MA"] = group["Close"].rolling(window=20).mean()
+        group["5_day_volatility"] = group["Close"].rolling(window=5).std()
+        group["momentum"] = group["Close"] - group["Close"].shift(1)
+        macd = MACD(close=group["Close"], window_slow=26, window_fast=12, window_sign=9)
+        group["MACD"] = macd.macd()
+        group["MACD_signal"] = macd.macd_signal()
+        group["MACD_histogram"] = macd.macd_diff()
+        group["week_of_year"] = group.index.isocalendar().week
+        group["month"] = group.index.month
+        return group.dropna()
+
+    def apply_features_to_stocks(self, stocks):
+        df_stocks = stocks.groupby("Symbol").apply(self.apply_features)
+        df_stocks.index = df_stocks.index.droplevel()
+        df_stocks.reset_index(inplace=True)
+        return df_stocks
+
+
+if __name__ == "__main__":
+    parser = SP500Parser()

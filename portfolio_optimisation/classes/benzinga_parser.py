@@ -5,7 +5,6 @@ from typing import List, Optional
 from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 import pandas as pd
 from benzinga import news_data
-import ast
 
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
@@ -13,9 +12,9 @@ class BenzingaNewsParser:
     def __init__(
         self,
         api_key: str,
-        tickers: List[str],
-        start_date: str,
-        end_date: str,
+        tickers: List[str] = None,
+        start_date: str = None,
+        end_date: str = None,
         log: bool = False,
     ):
         self.paper = news_data.News(api_key, log=log)
@@ -92,6 +91,21 @@ class BenzingaNewsParser:
                 page = 0
         return main_df
 
+    def get_news(self, ticker, page, date_from, date_to, display_output="full"):
+        if not isinstance(ticker, str):
+            ticker = ",".join(ticker)
+        news = self.paper.news(company_tickers=ticker,
+                               display_output=display_output,
+                               date_from=date_from,
+                               date_to=date_to,
+                               page=page,
+                               pagesize=100)
+        if len(news) == 0:
+            return pd.DataFrame(columns=['id', 'title', 'teaser', 'body', 'author', 'source', 'updated', 'stocks'])
+        df = pd.DataFrame(news)
+        df['teaser'] = df['teaser'].apply(self.remove_html_tags)
+        df['body'] = df['body'].apply(self.remove_html_tags)
+        return df
 
 if __name__ == "__main__":
     # Example usage:

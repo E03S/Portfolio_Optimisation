@@ -19,12 +19,9 @@ from ..classes.portfolio_optimizer import PortfolioOptimizer
 from ..classes.client import Client
 from datetime import datetime, timedelta
 import pandas as pd
+from .config import settings
 
-# All handlers should be attached to the Router (or Dispatcher)
-with initialize(version_base="1.3", config_path="../../configs"):
-    cfg = compose(config_name="config")
-
-bot = Bot(token=cfg.bot.token, parse_mode=ParseMode.HTML)
+bot = Bot(token=settings.bot_token, parse_mode=ParseMode.HTML)
 dp = Dispatcher()
 
 hard_coded_portfolio = {
@@ -55,13 +52,9 @@ hard_coded_portfolio = {
     'ADBE': 0.007
 }
 
-client = Client(base_url='http://localhost:8000')
-start_date = '2022-01-01'
-today = datetime.today().strftime('%Y-%m-%d')
+client = Client(base_url=f'{settings.api_host}:{settings.api_port}')
 tickers = hard_coded_portfolio.keys()
 tickers = list(tickers)
-optimizer = PortfolioOptimizer(tickers, start_date, today)
-optimizer.initialize()
 
 @dp.message(CommandStart())
 async def command_start_handler(message: Message) -> None:
@@ -81,58 +74,23 @@ async def news_handler(message: types.Message) -> None:
     Handler will get next message as a news for prediciton, if message empty it gets last news from benzinga for the last week and make prediction by them
     """
     try:
-        # news = get_titles()
-        # news_str = '\n'.join(news)
-        # await message.answer(f"We assembled next news for you\n {news_str}")
-        await make_prediction([], message)
+        await optimize_portfolio(message)
         await message.answer(f"Your portfolio is\n `{get_porfolio_str()}`", parse_mode=ParseMode.MARKDOWN)
 
     except TypeError as e:
         print(e)
         await message.answer("Nice try!")
 
-@dp.message(Command("optimization_by_input"))
-async def news_handler(message: types.Message) -> None:
-    """
-    Handler will get next message as a news for prediciton, if message empty it gets last news from benzinga for the last week and make prediction by them
-    """
-    text_message = message.text
-    try:
-        command_len = len("/optimization_by_input ")
-        if len(text_message) > command_len:
-            news = text_message[command_len:]
-            print(news)
-        else:
-            await message.answer("Please enter some news")
-            return
-        await make_prediction(news, message)
-        await message.answer(f"Your portfolio is\n `{get_porfolio_str()}`", parse_mode=ParseMode.MARKDOWN)
-    except TypeError as e:
-        print(e)
-        await message.answer("Nice try!")
-
-async def make_prediction(news, message: types.Message):
+async def optimize_portfolio(message: types.Message):
     try:
         await message.answer("Now we are making prediction it can require some time")
-        predictions = client.make_batch_prediction(tickers)
-        new_portfolio = recalculate_portfolio(predictions)
+        new_portfolio = client.optimize_portfolio(tickers)
         global hard_coded_portfolio
         hard_coded_portfolio = new_portfolio
         return new_portfolio
     except TypeError as e:
         print(e)
         return "Nice try!"
-
-def make_portfolio_str_from_json(json_response):
-    return '\n'.join(
-            f"{entry['ticker']}, Sentiment: {entry['sentiment']}, Expected Return: {entry['expected_return']}%, Risk: {entry['risk_percentage']}%"
-            for entry in json_response
-        )
-
-def recalculate_portfolio(json_response):
-    sorted_tickers_in_alp = sorted(tickers)
-    values = [json_response[ticker] for ticker in sorted_tickers_in_alp]
-    return optimizer.run_optimization(values)
 
 @dp.message(Command("portfolio"))
 async def portfolio_handler(message: types.Message) -> None:
@@ -150,18 +108,6 @@ async def portfolio_handler(message: types.Message) -> None:
 
 def get_porfolio_str():
     return '\n'.join(f"{ticker}: {percentage}" for ticker, percentage in hard_coded_portfolio.items())
-
-def get_titles():
-    parser = BenzingaNewsParser(api_key=cfg.benzinga.api_key)
-    last_week = datetime.now() - timedelta(days=7)
-    last_week = last_week.strftime("%Y-%m-%d")
-    tickers = hard_coded_portfolio.keys()
-    news_df = parser.get_news(ticker=tickers, page=1, date_from=last_week, date_to=datetime.now().strftime("%Y-%m-%d"))
-    if len(news_df) <= 1:
-        week_and_half = datetime.now() - timedelta(days=10)
-        week_and_half = week_and_half.strftime("%Y-%m-%d")
-        news_df = parser.get_news(ticker=tickers, page=1, date_from=week_and_half, date_to=datetime.now().strftime("%Y-%m-%d"))
-    return news_df['title'].tolist()
 
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed to all API calls

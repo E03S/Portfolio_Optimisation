@@ -13,12 +13,12 @@ class Settings(BaseSettings):
         env_file=str(ROOT_PATH / ".env"), env_file_encoding="utf-8", extra="ignore"
     )
     regressor_path: str = Field(
-        default=str(APP_PATH / "models/financial_data_only.cbm")
+        default=str(ROOT_PATH / "models/titles_embedding_financial_data.cbm")
     )
     preproccessor_path: str = Field(
-        default=str(APP_PATH / "models/preprocessor_pipeline.pkl")
+        default=str(ROOT_PATH / "models/pipeline_news_embeddings.pkl")
     )
     app_port: int = Field(default=8000)
+    benzinga_token: str = Field(default="")
 
-
-settings = Settings(_env_file=".env", _env_file_encoding="utf-8")
+settings = Settings(_env_file_encoding="utf-8")

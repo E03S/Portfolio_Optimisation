@@ -16,3 +16,7 @@ class Client:
     def make_batch_prediction(self, tickers):
         response = self.make_api_call('/predictor/predict_weekly_return_batch', method='POST', json=tickers)
         return response.json()
+    
+    def optimize_portfolio(self, tickers):
+        response = self.make_api_call('/portfolio/optimize', method='POST', json=tickers)
+        return response.json()
