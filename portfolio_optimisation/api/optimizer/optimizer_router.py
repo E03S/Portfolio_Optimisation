@@ -6,7 +6,7 @@ from fastapi_cache.decorator import cache
 from ...classes.portfolio_optimizer import PortfolioOptimizer
 from ..predictor.predict_router import predict_weekly_return_batch
 router = APIRouter(prefix="/portfolio", tags=["Parser"])
-
+from fastapi import HTTPException
 @router.post("/optimize")
 async def optimize_portfolio(tickers: List[str]):
     """
@@ -18,6 +18,8 @@ async def optimize_portfolio(tickers: List[str]):
     Returns:
     - dict: A dictionary containing the optimized portfolio.
     """
+    if not tickers:
+        raise HTTPException(status_code=422, detail="No tickers provided.")
     today = date.today()
     start_date = '2022-01-01'
     optimizer = PortfolioOptimizer(tickers, start_date, today.strftime('%Y-%m-%d'))

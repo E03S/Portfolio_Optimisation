@@ -36,16 +36,16 @@ async def predict_weekly_return(ticker: str):
     Returns:
     - dict: A dictionary containing the ticker symbol and the predicted weekly return.
     """
+    if not ticker:
+        raise HTTPException(status_code=422, detail="No ticker provided.")
     today = datetime.now().date()
     start_date = today - timedelta(days=60)
 
     data = stock_parser.download_custom_data([ticker], start_date, today)
     if data.empty:
         raise HTTPException(status_code=404, detail=f"No data available for {ticker}.")
-
-    ticker_data = stock_parser.apply_features_to_stocks(data).iloc[[-1]]
-    weekly_return = regressor.predict(ticker_data)
-    return {"ticker": ticker, "predicted_weekly_return": weekly_return[0]}
+    response = await predict_weekly_return_batch([ticker])
+    return response
 
 
 @router.post(
@@ -62,25 +62,27 @@ async def predict_weekly_return_batch(tickers: List[str]):
     Returns:
     - dict: A dictionary containing the ticker symbols and their predicted weekly returns.
     """
+    if not tickers:
+        raise HTTPException(status_code=422, detail="No tickers provided.")
     today = datetime.now().date()
     start_date = today - timedelta(days=60)
 
-    predictions = {}
     news_df = await get_news_df(tickers)
-    for ticker in tickers:
-        news_by_stock = news_df[news_df["stocks"] == ticker]
-        data = stock_parser.download_custom_data([ticker], start_date, today)
-        if data.empty:
-            predictions[ticker] = "No data available"
-        else:
-            ticker_data = stock_parser.apply_features_to_stocks(data).iloc[[-1]]
-            news_embedding = news_embedder.calculate_common_embedding(news_by_stock["title"].tolist())
-            ticker_data = ticker_data.join(pd.DataFrame([news_embedding], columns=[f'title_embedding_{i}' for i in range(384)]))
-            ticker_data.fillna(0, inplace=True)
-            ticker_data.columns = [col.lower() for col in ticker_data.columns]
-            weekly_return = regressor.predict(ticker_data)
-            predictions[ticker] = weekly_return[0]
-
+    data = stock_parser.download_custom_data(tickers, start_date, today)
+    number_of_news = len(data["Symbol"].value_counts())
+    if number_of_news != len(tickers):
+        raise HTTPException(status_code=404, detail=f"No data available for {number_of_news}/{len(tickers)} tickers.")
+    ticker_data = stock_parser.apply_features_to_stocks(data)
+    ticker_data = ticker_data.groupby("Symbol").tail(1)
+    grouped_news = news_df.groupby("stocks")
+    news_embeddings = news_embedder.calculate_common_embeddings(grouped_news['title'].apply(list).tolist())
+    news_embeddings = pd.DataFrame(news_embeddings, columns=[f'title_embedding_{i}' for i in range(384)])
+    news_embeddings['Symbol'] = grouped_news.groups.keys()
+    ticker_data = ticker_data.join(news_embeddings.set_index('Symbol'), on='Symbol')
+    ticker_data.fillna(0, inplace=True)
+    ticker_data.columns = [col.lower() for col in ticker_data.columns]
+    weekly_return = regressor.predict(ticker_data)
+    predictions = {ticker: weekly_return for ticker, weekly_return in zip(ticker_data['symbol'], weekly_return)}
     return predictions
 
 

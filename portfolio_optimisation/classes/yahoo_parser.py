@@ -82,8 +82,8 @@ class SP500Parser:
             data = (
                 data.stack()
                 .reset_index()
-                .rename(index=str, columns={"level_1": "Symbol"})
-                .sort_values(["Ticker", "Date"])
+                .rename(index=str, columns={"Ticker": "Symbol"})
+                .sort_values(["Symbol", "Date"])
                 .set_index("Date")
             )
         else:

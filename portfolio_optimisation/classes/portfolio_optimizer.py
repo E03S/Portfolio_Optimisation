@@ -34,7 +34,6 @@ class PortfolioOptimizer:
 
     def optimize_portfolio(self):
         """Optimizes the portfolio to find the optimal weights."""
-        print(self.expected_weekly_returns)
         ef = EfficientFrontier(self.expected_weekly_returns, self.covariance_matrix)
         weights = ef.max_sharpe()
         cleaned_weights = ef.clean_weights()
