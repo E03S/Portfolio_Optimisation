@@ -1,10 +1,7 @@
 from fastapi import APIRouter
 from typing import List
 from datetime import date
-<<<<<<< Updated upstream
-=======
 from fastapi_cache.decorator import cache
->>>>>>> Stashed changes
 from fastapi import HTTPException
 
 from ...classes.portfolio_optimizer import PortfolioOptimizer
@@ -12,10 +9,6 @@ from ..predictor.predict_router import predict_weekly_return_batch
 
 router = APIRouter(prefix="/portfolio", tags=["Parser"])
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
 @router.post("/optimize")
 async def optimize_portfolio(tickers: List[str]):
     """
