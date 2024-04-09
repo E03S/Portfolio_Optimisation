@@ -1,5 +1,20 @@
 # Система Оптимизации Портфеля
 
+## Запуск проекта
+Локльно проект можно запустить через
+
+```poetry install --with api bot```
+```cp portfolio_optimisation/.env.example portfolio_optimisation/.env```
+Добавьте переменные bot_token и benzinga_token 
+
+```make start-api```
+
+```make start-bot```
+
+Чтобы запустить через docker-compose
+```cp portfolio_optimisation/.env.example portfolio_optimisation/.env```
+```docker compose up```
+
 
 ## Обзор
 Проект направлен на разработку системы, предлагающей рекомендации по балансировке портфеля ценных бумаг, учитывая цены на акции и связанные новости для максимизации прибыли.

@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 from typing import List
 from datetime import date
-from fastapi_cache.decorator import cache
 from fastapi import HTTPException
 
 from ...classes.portfolio_optimizer import PortfolioOptimizer
 from ..predictor.predict_router import predict_weekly_return_batch
 
 router = APIRouter(prefix="/portfolio", tags=["Parser"])
+
 
 @router.post("/optimize")
 async def optimize_portfolio(tickers: List[str]):

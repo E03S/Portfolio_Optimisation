@@ -1,16 +1,21 @@
 version: "3.11"
 
 services:
-  # bot:
-  #   container_name: bot
-  #   build: 
-  #     dockerfile: portfolio_optimisation/bot/Dockerfile
-  #   env_file:
-  #     - ./portfolio_optimisation/.env
-  #   ports:
-  #     - "${APP_EXTERNAL_PORT:-8000}:${APP_PORT:-8000}"
-  #   volumes:
-  #     - "./portfolio_optimisation/classes:/app/classes"
+  bot:
+    container_name: bot
+    build: 
+      dockerfile: portfolio_optimisation/bot/Dockerfile
+    env_file:
+      - ./portfolio_optimisation/.env
+    volumes:
+      - "./portfolio_optimisation/classes:/app/classes"
+    networks:
+      po-network:
+        aliases:
+          - bot
+    environment:
+      - API_HOST=http://api
+      - API_PORT=8000
   api:
     container_name: api
     build: 
@@ -22,3 +27,10 @@ services:
     volumes:
       - "./portfolio_optimisation/classes:/app/classes"
       - "./portfolio_optimisation/models:/app/models"
+    networks:
+      po-network:
+        aliases:
+          - api
+networks:
+  po-network:
+    driver: bridge
