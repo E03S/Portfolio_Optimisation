@@ -4,11 +4,13 @@ from typing import List
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, HTTPException
-from ..config import settings
-from ...classes.yahoo_parser import SP500Parser
-from ...classes.benzinga_parser import BenzingaNewsParser
-from ...classes.predictor import FinancialPredictor
-from ...classes.news_embedder import NewsEmbedder
+
+from portfolio_optimisation.api.config import settings
+from portfolio_optimisation.classes.yahoo_parser import SP500Parser
+from portfolio_optimisation.classes.benzinga_parser import BenzingaNewsParser
+from portfolio_optimisation.classes.predictor import FinancialPredictor
+from portfolio_optimisation.classes.news_embedder import NewsEmbedder
+
 regressor_path = settings.regressor_path
 preprocessor_path = settings.preproccessor_path
 
@@ -116,3 +118,4 @@ async def get_news_df(tickers: List[str]):
     )
     news_df = news_df.explode("stocks")
     return news_df
+

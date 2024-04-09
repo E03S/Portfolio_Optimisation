@@ -4,8 +4,8 @@ from datetime import date
 from fastapi_cache.decorator import cache
 from fastapi import HTTPException
 
-from ...classes.portfolio_optimizer import PortfolioOptimizer
-from ..predictor.predict_router import predict_weekly_return_batch
+from portfolio_optimisation.classes.portfolio_optimizer import PortfolioOptimizer
+from portfolio_optimisation.api.predictor.predict_router import predict_weekly_return_batch
 
 router = APIRouter(prefix="/portfolio", tags=["Parser"])
 

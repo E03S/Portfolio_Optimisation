@@ -1,4 +1,5 @@
 import yfinance as yf
+
 from pypfopt.expected_returns import ema_historical_return
 from pypfopt.risk_models import CovarianceShrinkage
 from pypfopt.efficient_frontier import EfficientFrontier

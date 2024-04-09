@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from typing import List
 from datetime import date
 
-from ...classes.yahoo_parser import SP500Parser
+from portfolio_optimisation.classes.yahoo_parser import SP500Parser
 
 
 router = APIRouter(prefix="/parser", tags=["Parser"])

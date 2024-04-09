@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 
-from .config import settings
-from .parser.parser_router import router as parser_router
-from .predictor.predict_router import router as predict_router
+from portfolio_optimisation.api.config import settings
+from portfolio_optimisation.api.parser.parser_router import router as parser_router
+from portfolio_optimisation.api.predictor.predict_router import router as predict_router
+
 # from .optimizer.optimizer_router import router as optimizer_router
 
 # @asynccontextmanager

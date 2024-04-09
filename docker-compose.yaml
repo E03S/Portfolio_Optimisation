@@ -1,24 +1,30 @@
 version: "3.11"
 
 services:
-  # bot:
-  #   container_name: bot
-  #   build: 
-  #     dockerfile: portfolio_optimisation/bot/Dockerfile
-  #   env_file:
-  #     - ./portfolio_optimisation/.env
-  #   ports:
-  #     - "${APP_EXTERNAL_PORT:-8000}:${APP_PORT:-8000}"
-  #   volumes:
-  #     - "./portfolio_optimisation/classes:/app/classes"
   api:
     container_name: api
     build: 
-      dockerfile: portfolio_optimisation/api/Dockerfile
+      dockerfile: Dockerfile
     env_file:
-      - ./portfolio_optimisation/.env
+      - .env
     ports:
       - "${APP_EXTERNAL_PORT:-8000}:${APP_PORT:-8000}"
     volumes:
       - "./portfolio_optimisation/classes:/app/classes"
       - "./portfolio_optimisation/models:/app/models"
+  bot:
+    env_file:
+      - .env
+    build:
+      dockerfile: Dockerfile
+      context: .
+    command: ["poetry", "run", "python", "-m", "app.bot.bot"]
+    depends_on:
+      - api
+  redis:
+    container_name: redis_cache
+    image: redis:7
+    restart: on-failure
+    command: --port ${REDIS_PORT:-6379}
+    ports:
+      - "${REDIS_EXTERNAL_PORT:-6379}:${REDIS_PORT:-6379}"
