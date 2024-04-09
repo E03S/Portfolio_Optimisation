@@ -36,7 +36,7 @@ python-dotenv = "^1.0.1"
 category-encoders = "^2.6.3"
 tqdm = "^4.66.2"
 
-[tool.poetry.group.api.dependencies]
+[tool.poetry.group.prod.dependencies]
 python = "^3.11"
 sqlalchemy = "^2.0.29"
 yfinance = "^0.2.37"
@@ -55,14 +55,10 @@ pytest-asyncio = "^0.23.6"
 anyio = "^4.3.0"
 benzinga = "^1.21"
 sentence-transformers = "^2.6.1"
-
-
-[tool.poetry.group.bot.dependencies]
-python = "^3.11"
-aiogram = "^3.4.1"
-asyncio = "^3.4.3"
-pydantic-settings = "^2.2.1"
+pyportfolioopt = "1.5.2"
 requests = "^2.31.0"
+asyncio = "^3.4.3"
+aiogram = "^3.4.1"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"

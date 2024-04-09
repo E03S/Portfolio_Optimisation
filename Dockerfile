@@ -2,15 +2,14 @@ FROM python:3.11
 
 WORKDIR /portfolio_optimisation
 
-# Install Poetry
-RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
+RUN apt-get update && apt-get install -y libatlas-base-dev
 
-COPY pyproject.toml /
+RUN python -m pip install poetry
 
-RUN poetry install --only api 
+COPY pyproject.toml poetry.lock ./
+
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-interaction --no-cache --only prod 
 
 COPY portfolio_optimisation/ /portfolio_optimisation/portfolio_optimisation
 COPY .env /portfolio_optimisation/

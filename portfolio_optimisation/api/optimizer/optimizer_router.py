@@ -7,7 +7,7 @@ from fastapi import HTTPException
 from portfolio_optimisation.classes.portfolio_optimizer import PortfolioOptimizer
 from portfolio_optimisation.api.predictor.predict_router import predict_weekly_return_batch
 
-router = APIRouter(prefix="/portfolio", tags=["Parser"])
+router = APIRouter(prefix="/portfolio", tags=["PortfolioOptimizer"])
 
 @router.post("/optimize")
 async def optimize_portfolio(tickers: List[str]):
