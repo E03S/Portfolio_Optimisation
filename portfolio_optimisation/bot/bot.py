@@ -1,24 +1,13 @@
 import asyncio
-import logging
-import sys
-from os import getenv
 
-from aiogram import Bot, Dispatcher, Router, types
+from aiogram import Bot, Dispatcher, types
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.filters.command import Command
 
 from aiogram.types import Message
 from aiogram.utils.markdown import hbold
-import hydra
-from omegaconf import DictConfig, OmegaConf
-from hydra import compose, initialize
-from ..classes.benzinga_parser import BenzingaNewsParser
-from ..classes.llm_model import LLMModel
-from ..classes.portfolio_optimizer import PortfolioOptimizer
 from ..classes.client import Client
-from datetime import datetime, timedelta
-import pandas as pd
 from .config import settings
 
 bot = Bot(token=settings.bot_token, parse_mode=ParseMode.HTML)

@@ -14,8 +14,6 @@ numpy = "^1.26.3"
 openapi = "^1.1.0"
 pydantic = "^2.5.3"
 openai = "^1.6.1"
-aiogram = "^3.3.0"
-asyncio = "^3.4.3"
 ipykernel = "^6.28.0"
 pandas = "^2.1.4"
 textblob = "^0.17.1"
@@ -56,6 +54,13 @@ uvicorn = "^0.29.0"
 pytest = "^8.1.1"
 pytest-asyncio = "^0.23.6"
 anyio = "^4.3.0"
+
+[tool.poetry.group.bot.dependencies]
+python = "^3.11"
+aiogram = "^3.4.1"
+asyncio = "^3.4.3"
+pydantic-settings = "^2.2.1"
+requests = "^2.31.0"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
