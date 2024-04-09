@@ -1,10 +1,12 @@
 import pytest
 from fastapi.testclient import TestClient
 
+
 @pytest.fixture
 def client():
     from portfolio_optimisation.api.main import app
     return TestClient(app)
+
 
 def test_optimize_portfolio(client):
     # Test case 1: Valid input

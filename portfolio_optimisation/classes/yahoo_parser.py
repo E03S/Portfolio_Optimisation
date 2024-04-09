@@ -27,7 +27,9 @@ class SP500Parser:
         if self.tickers:
             return self.tickers
 
-        resp = requests.get("http://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
+        resp = requests.get(
+            "http://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
+        )
         soup = bs.BeautifulSoup(resp.text, "lxml")
         table = soup.find("table", {"class": "wikitable sortable"})
         self.tickers = [
@@ -41,17 +43,21 @@ class SP500Parser:
         self, start_date: datetime, end_date: datetime
     ) -> pd.DataFrame:
         """
-        Downloads historical data for S&P 500 companies within the specified date range with 1 day granularity.
+        Downloads historical data for S&P 500 companies
+            within the specified date range with 1 day granularity.
         Args:
             start_date (datetime): The start date for data retrieval.
             end_date (datetime): The end date for data retrieval.
         Returns:
-            pd.DataFrame: A DataFrame containing historical data for S&P 500 companies.
+            pd.DataFrame: A DataFrame containing historical data for
+                S&P 500 companies.
         """
         if not self.tickers:
             self.get_sp500_tickers()
 
-        data = yf.download(self.tickers, start=start_date, end=end_date, interval="1d")
+        data = yf.download(
+            self.tickers, start=start_date, end=end_date, interval="1d"
+                           )
         df = (
             data.stack()
             .reset_index()
@@ -64,16 +70,19 @@ class SP500Parser:
         return self.data
 
     def download_custom_data(
-        self, custom_tickers: List[str], start_date: datetime, end_date: datetime
+        self, custom_tickers: List[str],
+        start_date: datetime, end_date: datetime
     ) -> pd.DataFrame:
         """
-        Downloads historical data for custom companies within the specified date range with 1 day granularity.
+        Downloads historical data for custom companies
+            within the date range with 1 day granularity.
         Args:
             custom_tickers (List[str]): List of specific tickers to parse.
             start_date (datetime): The start date for data retrieval.
             end_date (datetime): The end date for data retrieval.
         Returns:
-            pd.DataFrame: A DataFrame containing historical data for S&P 500 companies.
+            pd.DataFrame: A DataFrame containing historical data
+                for S&P 500 companies.
         """
         data = yf.download(
             custom_tickers, start=start_date, end=end_date, interval="1d"
@@ -103,7 +112,12 @@ class SP500Parser:
         group["20_day_MA"] = group["Close"].rolling(window=20).mean()
         group["5_day_volatility"] = group["Close"].rolling(window=5).std()
         group["momentum"] = group["Close"] - group["Close"].shift(1)
-        macd = MACD(close=group["Close"], window_slow=26, window_fast=12, window_sign=9)
+        macd = MACD(
+            close=group["Close"],
+            window_slow=26,
+            window_fast=12,
+            window_sign=9
+        )
         group["MACD"] = macd.macd()
         group["MACD_signal"] = macd.macd_signal()
         group["MACD_histogram"] = macd.macd_diff()

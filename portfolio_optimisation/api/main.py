@@ -1,8 +1,4 @@
 from fastapi import FastAPI
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis
-from contextlib import asynccontextmanager
 
 from .config import settings
 from .parser.parser_router import router as parser_router
@@ -28,6 +24,7 @@ app = FastAPI(title="FastAPI App for Stocks Price Prediction")
 app.include_router(parser_router)
 app.include_router(predict_router)
 app.include_router(optimizer_router)
+
 
 @app.get("/", tags=["Root"])
 async def root():

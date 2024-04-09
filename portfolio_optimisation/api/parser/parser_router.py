@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from typing import List
 from datetime import date
-from fastapi_cache.decorator import cache
 
 from ...classes.yahoo_parser import SP500Parser
 
@@ -19,13 +18,13 @@ async def get_sp500_tickers():
     """
     data = parser.get_sp500_tickers()
     return data
-    
+
 
 @router.get("/sp500_data")
 # @cache(expire=3600)
 async def get_sp500_data(start_date: date, end_date: date):
     """
-    Download historical data for S&P 500 companies within the specified date range.
+    Download historical data for S&P 500 companies within the date range.
 
     Parameters:
     - start_date (date): The start date for data retrieval. Format: YYYY-MM-DD.
@@ -40,9 +39,13 @@ async def get_sp500_data(start_date: date, end_date: date):
 
 
 @router.post("/custom")
-async def get_custom_data(custom_tickers: List[str], start_date: date, end_date: date):
+async def get_custom_data(
+    custom_tickers: List[str],
+    start_date: date,
+    end_date: date
+):
     """
-    Download historical data for custom companies within the specified date range.
+    Download historical data for custom companies within the date range.
 
     Parameters:
     - custom_tickers (List[str]): List of specific tickers to parse.

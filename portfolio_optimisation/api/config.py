@@ -1,6 +1,6 @@
 import pathlib
 
-from pydantic import Field, RedisDsn
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,7 +10,9 @@ APP_PATH: pathlib.Path = pathlib.Path(__file__).resolve().parent
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file=str(ROOT_PATH / ".env"), env_file_encoding="utf-8", extra="ignore"
+        env_file=str(ROOT_PATH / ".env"),
+        env_file_encoding="utf-8",
+        extra="ignore"
     )
     regressor_path: str = Field(
         default=str(ROOT_PATH / "models/titles_embedding_financial_data.cbm")
@@ -20,5 +22,6 @@ class Settings(BaseSettings):
     )
     app_port: int = Field(default=8000)
     benzinga_token: str = Field(default="")
+
 
 settings = Settings(_env_file_encoding="utf-8")

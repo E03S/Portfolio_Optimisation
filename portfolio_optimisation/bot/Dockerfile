@@ -1,8 +1,5 @@
 FROM python:3.11
 
-ENV TELEGRAM_TOKEN=""
-
-
 WORKDIR /
 COPY pyproject.toml poetry.lock /
 

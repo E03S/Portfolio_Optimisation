@@ -65,6 +65,8 @@ requests = "^2.31.0"
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"
 black = "^23.12.1"
+flake8 = "^7.0.0"
+autoflake = "^2.3.1"
 
 [build-system]
 requires = ["poetry-core"]

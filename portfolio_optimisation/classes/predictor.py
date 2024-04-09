@@ -1,6 +1,7 @@
 import pickle
 from catboost import CatBoostRegressor
 
+
 class FinancialPredictor:
     def __init__(self, regressor_path, preprocessor_path):
         self.model = CatBoostRegressor().load_model(regressor_path)
