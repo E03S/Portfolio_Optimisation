@@ -3,7 +3,7 @@
 ## Запуск проекта
 Локльно проект можно запустить через
 
-```poetry install --with api bot```
+```poetry install --only prod```
 ```cp portfolio_optimisation/.env.example portfolio_optimisation/.env```
 Добавьте переменные bot_token и benzinga_token 
 
