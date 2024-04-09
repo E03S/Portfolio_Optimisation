@@ -34,7 +34,6 @@ xgboost = "^2.0.3"
 optuna = "^3.5.0"
 python-dotenv = "^1.0.1"
 category-encoders = "^2.6.3"
-pyportfolioopt = "1.5.2"
 tqdm = "^4.66.2"
 
 [tool.poetry.group.api.dependencies]
@@ -54,6 +53,9 @@ uvicorn = "^0.29.0"
 pytest = "^8.1.1"
 pytest-asyncio = "^0.23.6"
 anyio = "^4.3.0"
+benzinga = "^1.21"
+sentence-transformers = "^2.6.1"
+
 
 [tool.poetry.group.bot.dependencies]
 python = "^3.11"

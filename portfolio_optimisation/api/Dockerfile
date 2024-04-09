@@ -1,6 +1,6 @@
-FROM python:3.12
+FROM python:3.11
 
-WORKDIR /app
+WORKDIR /
 
 # Install Poetry
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python && \
@@ -8,18 +8,14 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python
     ln -s /opt/poetry/bin/poetry && \
     poetry config virtualenvs.create false
 
-# Copy poetry.lock* in case it doesn't exist in the repo
-COPY /app/
+COPY pyproject.toml /
 
-# Allow installing dev dependencies to run tests
-ARG INSTALL_DEV=false
+RUN poetry install --only api
 
-RUN bash -c "if [ $INSTALL_DEV == 'true' ] ; then poetry install --no-root ; else poetry install --no-root --only main ; fi"
-
-COPY /app /app/app
+COPY portfolio_optimisation/api /app/api/
 
 ENV PYTHOPATH="/app:$PYTHONPATH"
 
 ENV APP_PORT=8000
 
-CMD ["poetry", "run", "uvicorn", "app.main:app", "--reload", "--host", "0.0.0.0", "--port", "${APP_PORT}"]
+CMD ["poetry", "run", "uvicorn", "app.api.main:app", "--reload", "--host", "0.0.0.0", "--port", "8000"]

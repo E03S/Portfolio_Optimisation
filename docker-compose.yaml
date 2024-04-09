@@ -1,13 +1,24 @@
 version: "3.11"
 
 services:
-  bot:
-    container_name: bot
+  # bot:
+  #   container_name: bot
+  #   build: 
+  #     dockerfile: portfolio_optimisation/bot/Dockerfile
+  #   env_file:
+  #     - ./portfolio_optimisation/.env
+  #   ports:
+  #     - "${APP_EXTERNAL_PORT:-8000}:${APP_PORT:-8000}"
+  #   volumes:
+  #     - "./portfolio_optimisation/classes:/app/classes"
+  api:
+    container_name: api
     build: 
-      dockerfile: portfolio_optimisation/bot/Dockerfile
+      dockerfile: portfolio_optimisation/api/Dockerfile
     env_file:
       - ./portfolio_optimisation/.env
     ports:
       - "${APP_EXTERNAL_PORT:-8000}:${APP_PORT:-8000}"
     volumes:
       - "./portfolio_optimisation/classes:/app/classes"
+      - "./portfolio_optimisation/models:/app/models"
