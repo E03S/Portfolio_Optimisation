@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup, MarkupResemblesLocatorWarning
 import pandas as pd
 from benzinga import news_data
 from concurrent.futures import ThreadPoolExecutor
+
 warnings.filterwarnings("ignore", category=MarkupResemblesLocatorWarning)
 
 
@@ -128,11 +129,16 @@ class BenzingaNewsParser:
 
 
 if __name__ == "__main__":
+    import os
+    from dotenv import load_dotenv
+
+    load_dotenv()
+
+    api_key = os.getenv("BENZINGA_TOKEN")
     tickers = ["AAPL", "GOOGL", "MSFT"]
     start_date = "2024-01-01"
     end_date = "2024-03-01"
-    api_key = "d2d497c85f47496884ab3a91327a090f"
-
+    
     benzinga_fetcher = BenzingaNewsParser(
         api_key,
         tickers,
