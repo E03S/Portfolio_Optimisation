@@ -6,17 +6,14 @@ RUN apt-get update && apt-get install -y libatlas-base-dev
 
 RUN python -m pip install poetry
 
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml poetry.lock /portfolio_optimisation/
 
 RUN poetry config virtualenvs.create false \
-    && poetry install --no-interaction --no-cache --only prod 
+    && poetry install --no-interaction --no-cache --only api 
 
 COPY portfolio_optimisation/api /portfolio_optimisation/portfolio_optimisation/api
-COPY portfolio_optimisation/bot /portfolio_optimisation/portfolio_optimisation/bot
 COPY portfolio_optimisation/classes /portfolio_optimisation/portfolio_optimisation/classes
 COPY portfolio_optimisation/models /portfolio_optimisation/portfolio_optimisation/models
-
-COPY .env /portfolio_optimisation/
 
 ENV PYTHOPATH="/portfolio_optimisation:$PYTHONPATH"
 

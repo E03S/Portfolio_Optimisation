@@ -4,7 +4,7 @@ services:
   api:
     container_name: api
     build: 
-      dockerfile: Dockerfile
+      dockerfile: portfolio_optimisation/api/Dockerfile
     env_file:
       - .env
     ports:
@@ -12,23 +12,23 @@ services:
     # depends_on:
     #   - redis
     volumes:
-      - "./portfolio_optimisation/classes:/app/classes"
-      - "./portfolio_optimisation/models:/app/models"
+      - "./portfolio_optimisation/classes:/portfolio_optimisation/classes"
+      - "./portfolio_optimisation/models:/portfolio_optimisation/models"
     networks:
       po-network:
         aliases:
           - api
   bot:
+    container_name: bot
     env_file:
       - .env
     build:
-      dockerfile: Dockerfile
+      dockerfile: portfolio_optimisation/bot/Dockerfile
       context: .
-    command: ["poetry", "run", "python", "-m", "portfolio_optimisation.bot.bot"]
     depends_on:
       - api
     volumes:
-      - "./portfolio_optimisation/classes:/app/classes"
+      - "./portfolio_optimisation/classes:/portfolio_optimisation/classes"
     networks:
       po-network:
         aliases:
