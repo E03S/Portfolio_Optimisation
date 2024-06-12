@@ -35,6 +35,7 @@ optuna = "^3.5.0"
 python-dotenv = "^1.0.1"
 category-encoders = "^2.6.3"
 tqdm = "^4.66.2"
+finbert-embedding = "^0.1.5"
 
 [tool.poetry.group.api.dependencies]
 python = "^3.11"
