@@ -65,6 +65,8 @@ aiogram = "^3.4.1"
 asyncio = "^3.4.3"
 pydantic-settings = "^2.2.1"
 requests = "^2.31.0"
+pandas = "^2.2.2"
+yfinance = "^0.2.40"
 
 [tool.poetry.group.dev.dependencies]
 jupyter = "^1.0.0"

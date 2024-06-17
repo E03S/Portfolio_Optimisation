@@ -10,7 +10,8 @@ from portfolio_optimisation.classes.yahoo_parser import SP500Parser
 from portfolio_optimisation.classes.benzinga_parser import BenzingaNewsParser
 from portfolio_optimisation.classes.predictor import FinancialPredictor
 from portfolio_optimisation.classes.news_embedder import NewsEmbedder
-
+import yfinance as yf
+import logging
 regressor_path = settings.regressor_path
 preprocessor_path = settings.preproccessor_path
 
@@ -18,7 +19,7 @@ stock_parser = SP500Parser()
 news_embedder = NewsEmbedder()
 regressor = FinancialPredictor(regressor_path=regressor_path,
                                preprocessor_path=preprocessor_path)
-news_parser = BenzingaNewsParser(api_key=settings.benzinga_token)
+# news_parser = BenzingaNewsParser(api_key=settings.benzinga_token)
 
 router = APIRouter(prefix="/predictor", tags=["Predictor"])
 
@@ -101,21 +102,27 @@ async def predict_weekly_return_batch(tickers: List[str]):
     predictions = {ticker: wr for ticker, wr in zipped_return}
     return predictions
 
+def get_news(ticker):
+    try:
+        ticker = yf.Ticker(ticker)
+        news = ticker.get_news()
+        return news
+    except Exception as e:
+        logging.error(f"Error in get_news: {e}")
+        return None
+    
+def get_news_for_tickers(tickers):
+    news = {}
+    for ticker in tickers:
+        news[ticker] = get_news(ticker)
+    return news
 
 async def get_news_df(tickers: List[str]):
-    last_days = datetime.now() - timedelta(days=3)
-    last_days = last_days.strftime("%Y-%m-%d")
-    news_df = news_parser.get_news(
-        ticker=tickers,
-        page=1,
-        date_from=last_days,
-        date_to=datetime.now().strftime("%Y-%m-%d")
-    )
-    needed_columns = ['title', 'stocks']
-    news_df = news_df[needed_columns]
-    news_df["stocks"] = news_df["stocks"].apply(
-        lambda x: [entry["name"] for entry in x]
-    )
-    news_df = news_df.explode("stocks")
+    news = get_news_for_tickers(tickers)
+    news_list = []
+    for stock in news:
+        for news_item in news[stock]:
+            news_list.append({'stocks': stock, 'title': news_item['title']})
+    news_df = pd.DataFrame(news_list)
     return news_df
 
